@@ -360,7 +360,7 @@ local function createGUI()
 	Instance.new("UICorner",TopBar).CornerRadius=UDim.new(0,6)
 	local tbfix=Instance.new("Frame",TopBar) tbfix.Size=UDim2.new(1,0,0,8) tbfix.Position=UDim2.new(0,0,1,-8) tbfix.BackgroundColor3=SIDEBAR tbfix.BorderSizePixel=0
 
-	local tL=Instance.new("TextLabel",TopBar) tL.Size=UDim2.new(0,220,1,0) tL.Position=UDim2.new(0,14,0,0) tL.BackgroundTransparency=1 tL.Text="KOHAN_SCRIPTS" tL.TextColor3=WHITE tL.TextSize=15 tL.Font=FONT tL.TextXAlignment=Enum.TextXAlignment.Left
+	local tL=Instance.new("TextLabel",TopBar) tL.Size=UDim2.new(0,220,1,0) tL.Position=UDim2.new(0,14,0,0) tL.BackgroundTransparency=1 tL.Text="fraklinstan_SCRIPTS" tL.TextColor3=WHITE tL.TextSize=15 tL.Font=FONT tL.TextXAlignment=Enum.TextXAlignment.Left
 	local vL=Instance.new("TextLabel",TopBar) vL.Size=UDim2.new(0,60,1,0) vL.Position=UDim2.new(0.5,-30,0,0) vL.BackgroundTransparency=1 vL.Text="v1.0" vL.TextColor3=GREY vL.TextSize=12 vL.Font=FONT vL.TextXAlignment=Enum.TextXAlignment.Center
 	local hL=Instance.new("TextLabel",TopBar) hL.Size=UDim2.new(0,120,1,0) hL.Position=UDim2.new(1,-148,0,0) hL.BackgroundTransparency=1 hL.Text="RSHIFT = HIDE" hL.TextColor3=GREY hL.TextSize=11 hL.Font=FONT hL.TextXAlignment=Enum.TextXAlignment.Right
 	local cb=Instance.new("TextButton",TopBar) cb.Size=UDim2.new(0,26,0,26) cb.Position=UDim2.new(1,-34,0.5,-13) cb.BackgroundColor3=Color3.fromRGB(200,50,50) cb.BorderSizePixel=0 cb.Text="x" cb.TextColor3=WHITE cb.TextSize=14 cb.Font=FONT
