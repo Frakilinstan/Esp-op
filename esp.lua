@@ -1,5 +1,5 @@
 ----------------------------------------------------
--- Franklinstan_scripts v1.0
+-- frakilnstan_scripts v1.0
 -- RightShift = toggle menu
 ----------------------------------------------------
 
@@ -410,4 +410,216 @@ local function createGUI()
 		Instance.new("UICorner",btn).CornerRadius=UDim.new(0,4)
 		local iL=Instance.new("TextLabel",btn) iL.Size=UDim2.new(0,28,1,0) iL.Position=UDim2.new(0,8,0,0) iL.BackgroundTransparency=1 iL.Text=it.i iL.TextColor3=GREY iL.TextSize=11 iL.Font=FONT
 		local nL=Instance.new("TextLabel",btn) nL.Size=UDim2.new(1,-40,1,0) nL.Position=UDim2.new(0,38,0,0) nL.BackgroundTransparency=1 nL.Text=it.n:upper() nL.TextColor3=GREY nL.TextSize=12 nL.Font=FONT nL.TextXAlignment=Enum.TextXAlignment.Left
-		b
+		btn.MouseButton1Click:Connect(function() switchTab(it.n) end)
+		navBtns[it.n]=btn
+	end
+	switchTab("Aimbot")
+
+	-- Widget helpers
+	local function makeCard(parent, title)
+		local card=Instance.new("Frame",parent)
+		card.Size=UDim2.new(1,0,0,0) card.AutomaticSize=Enum.AutomaticSize.Y card.BackgroundColor3=CARD card.BorderSizePixel=0
+		Instance.new("UICorner",card).CornerRadius=UDim.new(0,5)
+		local cs=Instance.new("UIStroke",card) cs.Color=BORDER cs.Thickness=1
+		local hdr=Instance.new("TextLabel",card)
+		hdr.Size=UDim2.new(1,0,0,26) hdr.BackgroundColor3=Color3.fromRGB(20,20,26) hdr.BorderSizePixel=0
+		hdr.Text="  "..title:upper() hdr.TextColor3=PURPLE hdr.TextSize=11 hdr.Font=FONT hdr.TextXAlignment=Enum.TextXAlignment.Left
+		Instance.new("UICorner",hdr).CornerRadius=UDim.new(0,5)
+		local hfix=Instance.new("Frame",hdr) hfix.Size=UDim2.new(1,0,0,6) hfix.Position=UDim2.new(0,0,1,-6) hfix.BackgroundColor3=Color3.fromRGB(20,20,26) hfix.BorderSizePixel=0
+		local inner=Instance.new("Frame",card)
+		inner.Size=UDim2.new(1,0,0,0) inner.Position=UDim2.new(0,0,0,26) inner.AutomaticSize=Enum.AutomaticSize.Y inner.BackgroundTransparency=1 inner.BorderSizePixel=0
+		local ll=Instance.new("UIListLayout",inner) ll.Padding=UDim.new(0,0)
+		local ip=Instance.new("UIPadding",inner) ip.PaddingBottom=UDim.new(0,4)
+		return inner
+	end
+
+	local function toggle(parent, label, default, cb)
+		local state=default
+		local row=Instance.new("Frame",parent) row.Size=UDim2.new(1,0,0,34) row.BackgroundTransparency=1 row.BorderSizePixel=0
+		local lbl=Instance.new("TextLabel",row) lbl.Size=UDim2.new(1,-54,1,0) lbl.Position=UDim2.new(0,12,0,0) lbl.BackgroundTransparency=1 lbl.Text=label:upper() lbl.TextColor3=WHITE lbl.TextSize=11 lbl.Font=FONT lbl.TextXAlignment=Enum.TextXAlignment.Left
+		local tbg=Instance.new("Frame",row) tbg.Size=UDim2.new(0,34,0,18) tbg.Position=UDim2.new(1,-44,0.5,-9) tbg.BackgroundColor3=state and TOGON or TOGOFF tbg.BorderSizePixel=0
+		Instance.new("UICorner",tbg).CornerRadius=UDim.new(1,0)
+		local tk=Instance.new("Frame",tbg) tk.Size=UDim2.new(0,14,0,14) tk.Position=state and UDim2.new(1,-16,0.5,-7) or UDim2.new(0,2,0.5,-7) tk.BackgroundColor3=WHITE tk.BorderSizePixel=0
+		Instance.new("UICorner",tk).CornerRadius=UDim.new(1,0)
+		local ca=Instance.new("TextButton",row) ca.Size=UDim2.new(1,0,1,0) ca.BackgroundTransparency=1 ca.Text=""
+		ca.MouseButton1Click:Connect(function()
+			state=not state cb(state)
+			TweenService:Create(tk,TweenInfo.new(0.12,Enum.EasingStyle.Quad),{Position=state and UDim2.new(1,-16,0.5,-7) or UDim2.new(0,2,0.5,-7)}):Play()
+			TweenService:Create(tbg,TweenInfo.new(0.12,Enum.EasingStyle.Quad),{BackgroundColor3=state and TOGON or TOGOFF}):Play()
+		end)
+	end
+
+	local function slider(parent, label, minV, maxV, defV, step, cb)
+		local cv=defV
+		local row=Instance.new("Frame",parent) row.Size=UDim2.new(1,0,0,48) row.BackgroundTransparency=1 row.BorderSizePixel=0
+		local lbl=Instance.new("TextLabel",row) lbl.Size=UDim2.new(1,-16,0,18) lbl.Position=UDim2.new(0,12,0,4) lbl.BackgroundTransparency=1 lbl.Text=label:upper() lbl.TextColor3=WHITE lbl.TextSize=11 lbl.Font=FONT lbl.TextXAlignment=Enum.TextXAlignment.Left
+		local tr=Instance.new("Frame",row) tr.Size=UDim2.new(1,-16,0,14) tr.Position=UDim2.new(0,8,0,26) tr.BackgroundColor3=Color3.fromRGB(32,32,40) tr.BorderSizePixel=0
+		Instance.new("UICorner",tr).CornerRadius=UDim.new(0,2)
+		local fi=Instance.new("Frame",tr) fi.Size=UDim2.new((cv-minV)/(maxV-minV),0,1,0) fi.BackgroundColor3=PURPLE fi.BorderSizePixel=0
+		Instance.new("UICorner",fi).CornerRadius=UDim.new(0,2)
+		local vl=Instance.new("TextLabel",tr) vl.Size=UDim2.new(1,0,1,0) vl.BackgroundTransparency=1 vl.Text=math.floor(cv).."/"..math.floor(maxV) vl.TextColor3=WHITE vl.TextSize=10 vl.Font=FONT vl.TextXAlignment=Enum.TextXAlignment.Center
+		local drag=false
+		local function upd(ix)
+			local rel=math.clamp((ix-tr.AbsolutePosition.X)/tr.AbsoluteSize.X,0,1)
+			local sv=math.clamp(math.round((minV+rel*(maxV-minV))/step)*step,minV,maxV)
+			cv=sv fi.Size=UDim2.new((sv-minV)/(maxV-minV),0,1,0) vl.Text=math.floor(sv).."/"..math.floor(maxV) cb(sv)
+		end
+		tr.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then upd(i.Position.X) drag=true end end)
+		UserInputService.InputChanged:Connect(function(i) if drag and i.UserInputType==Enum.UserInputType.MouseMovement then upd(i.Position.X) end end)
+		UserInputService.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then drag=false end end)
+	end
+
+	local function colorRow(parent, label, startColor, onChange)
+		local expanded=false
+		local r,g,b=math.floor(startColor.R*255),math.floor(startColor.G*255),math.floor(startColor.B*255)
+		local wrap=Instance.new("Frame",parent) wrap.Size=UDim2.new(1,0,0,34) wrap.BackgroundTransparency=1 wrap.BorderSizePixel=0 wrap.ClipsDescendants=true
+		local lbl=Instance.new("TextLabel",wrap) lbl.Size=UDim2.new(1,-44,0,34) lbl.Position=UDim2.new(0,12,0,0) lbl.BackgroundTransparency=1 lbl.Text=label:upper() lbl.TextColor3=WHITE lbl.TextSize=11 lbl.Font=FONT lbl.TextXAlignment=Enum.TextXAlignment.Left
+		local sw=Instance.new("Frame",wrap) sw.Size=UDim2.new(0,22,0,22) sw.Position=UDim2.new(1,-34,0,6) sw.BackgroundColor3=startColor sw.BorderSizePixel=0
+		Instance.new("UICorner",sw).CornerRadius=UDim.new(0,3) Instance.new("UIStroke",sw).Color=BORDER
+		local pf=Instance.new("Frame",wrap) pf.Size=UDim2.new(1,0,0,68) pf.Position=UDim2.new(0,0,0,34) pf.BackgroundTransparency=1 pf.BorderSizePixel=0
+		local pll=Instance.new("UIListLayout",pf) pll.Padding=UDim.new(0,1)
+		local function fire() local c=Color3.fromRGB(r,g,b) sw.BackgroundColor3=c onChange(c) end
+		local CN={{"R",Color3.fromRGB(220,60,60)},{"G",Color3.fromRGB(60,200,80)},{"B",Color3.fromRGB(60,140,255)}}
+		local CV={r,g,b} local CS={function(v) r=v end,function(v) g=v end,function(v) b=v end}
+		for i=1,3 do
+			local cr=Instance.new("Frame",pf) cr.Size=UDim2.new(1,0,0,22) cr.BackgroundTransparency=1 cr.BorderSizePixel=0
+			local cl=Instance.new("TextLabel",cr) cl.Size=UDim2.new(0,18,1,0) cl.Position=UDim2.new(0,12,0,0) cl.BackgroundTransparency=1 cl.Text=CN[i][1] cl.TextColor3=CN[i][2] cl.TextSize=10 cl.Font=FONT
+			local ct=Instance.new("Frame",cr) ct.Size=UDim2.new(1,-44,0,8) ct.Position=UDim2.new(0,32,0.5,-4) ct.BackgroundColor3=Color3.fromRGB(32,32,40) ct.BorderSizePixel=0
+			Instance.new("UICorner",ct).CornerRadius=UDim.new(0,2)
+			local cf=Instance.new("Frame",ct) cf.Size=UDim2.new(CV[i]/255,0,1,0) cf.BackgroundColor3=CN[i][2] cf.BorderSizePixel=0
+			Instance.new("UICorner",cf).CornerRadius=UDim.new(0,2)
+			local idx=i local cd=false
+			local function updC(ix)
+				local rel=math.clamp((ix-ct.AbsolutePosition.X)/ct.AbsoluteSize.X,0,1)
+				local val=math.floor(rel*255) CV[idx]=val CS[idx](val) cf.Size=UDim2.new(rel,0,1,0) fire()
+			end
+			ct.InputBegan:Connect(function(inp) if inp.UserInputType==Enum.UserInputType.MouseButton1 then updC(inp.Position.X) cd=true end end)
+			UserInputService.InputChanged:Connect(function(inp) if cd and inp.UserInputType==Enum.UserInputType.MouseMovement then updC(inp.Position.X) end end)
+			UserInputService.InputEnded:Connect(function(inp) if inp.UserInputType==Enum.UserInputType.MouseButton1 then cd=false end end)
+		end
+		local ca=Instance.new("TextButton",wrap) ca.Size=UDim2.new(0,34,0,34) ca.Position=UDim2.new(1,-34,0,0) ca.BackgroundTransparency=1 ca.Text=""
+		ca.MouseButton1Click:Connect(function()
+			expanded=not expanded
+			TweenService:Create(wrap,TweenInfo.new(0.15,Enum.EasingStyle.Quad),{Size=UDim2.new(1,0,0,expanded and 102 or 34)}):Play()
+		end)
+	end
+
+	local function keybindRow(parent, label)
+		local row=Instance.new("Frame",parent) row.Size=UDim2.new(1,0,0,34) row.BackgroundTransparency=1 row.BorderSizePixel=0
+		local lbl=Instance.new("TextLabel",row) lbl.Size=UDim2.new(1,-90,1,0) lbl.Position=UDim2.new(0,12,0,0) lbl.BackgroundTransparency=1 lbl.Text=label:upper() lbl.TextColor3=WHITE lbl.TextSize=11 lbl.Font=FONT lbl.TextXAlignment=Enum.TextXAlignment.Left
+		local badge=Instance.new("TextButton",row) badge.Size=UDim2.new(0,76,0,22) badge.Position=UDim2.new(1,-84,0.5,-11) badge.BackgroundColor3=Color3.fromRGB(28,26,38) badge.BorderSizePixel=0 badge.Text=aimHotkey badge.TextColor3=PURPLE badge.TextSize=10 badge.Font=FONT
+		Instance.new("UICorner",badge).CornerRadius=UDim.new(0,3) Instance.new("UIStroke",badge).Color=PURPLE
+		badge.MouseButton1Click:Connect(function()
+			if bindingAimKey then return end
+			bindingAimKey=true badge.Text="..." badge.TextColor3=Color3.fromRGB(255,220,80)
+			task.wait(0.1)
+			local kc,mc
+			local function commit(name)
+				if not bindingAimKey then return end
+				aimHotkey=name badge.Text=name badge.TextColor3=PURPLE bindingAimKey=false
+				if kc then kc:Disconnect() end if mc then mc:Disconnect() end
+			end
+			kc=UserInputService.InputBegan:Connect(function(input,gp)
+				if not bindingAimKey then return end
+				if input.UserInputType==Enum.UserInputType.MouseButton1 then commit("MouseButton1")
+				elseif input.UserInputType==Enum.UserInputType.MouseButton2 then commit("MouseButton2")
+				elseif input.UserInputType==Enum.UserInputType.MouseButton3 then commit("MouseButton3")
+				elseif not gp and input.KeyCode~=Enum.KeyCode.Unknown then commit(input.KeyCode.Name) end
+			end)
+			mc=RunService.Heartbeat:Connect(function()
+				if not bindingAimKey then mc:Disconnect() return end
+				if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then commit("MouseButton1")
+				elseif UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then commit("MouseButton2")
+				elseif UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton3) then commit("MouseButton3") end
+			end)
+		end)
+	end
+
+	-- ── AIMBOT TAB
+	local aP=panels["Aimbot"]
+	local aC=makeCard(aP,"Aimbot Settings")
+	toggle(aC,"Enable Aimbot",false,function(s) aimbotEnabled=s end)
+	toggle(aC,"Head Aim",false,function(s) headAimEnabled=s end)
+	toggle(aC,"Team Check",false,function(s) teamCheck=s end)
+	toggle(aC,"Wall Check",false,function(s) wallCheck=s end)
+	slider(aC,"FOV",20,500,fov,5,function(v) fov=v end)
+	slider(aC,"Smoothing",1,20,math.floor(aimSmoothing*10),1,function(v) aimSmoothing=v/10 end)
+	colorRow(aC,"FOV Color",fovColor,function(c) fovColor=c end)
+	keybindRow(aC,"Aim Key")
+
+	local fC=makeCard(aP,"FOV Circle")
+	toggle(fC,"Show Circle",true,function(s) fovVisible=s end)
+
+	local xC=makeCard(aP,"Crosshair")
+	toggle(xC,"Show Crosshair",   true,  function(s) crosshairVisible=s end)
+	toggle(xC,"Rainbow Crosshair",false, function(s) crosshairRainbow=s end)
+	slider(xC,"Speed",      1,  200, crosshairSpeed,              1, function(v) crosshairSpeed=v end)
+	slider(xC,"Length",     2,  60,  crosshairSize,               1, function(v) crosshairSize=v end)
+	slider(xC,"Gap",        0,  20,  crosshairGap,                1, function(v) crosshairGap=v end)
+	slider(xC,"Thickness",  1,  10,  math.floor(crosshairThick),  1, function(v) crosshairThick=v end)
+	colorRow(xC,"Color",crosshairColor,function(c) crosshairColor=c end)
+
+	-- ── ESP TAB
+	local eP=panels["ESP"]
+	local eC=makeCard(eP,"ESP Settings")
+	toggle(eC,"Enable ESP",true,function(s) espEnabled=s end)
+	toggle(eC,"Team Check",false,function(s) espTeamCheck=s end)
+	toggle(eC,"Boxes",true,function(s) espBoxEnabled=s end)
+	toggle(eC,"Skeleton",false,function(s) espSkeletonEnabled=s end)
+	toggle(eC,"Health Bar",true,function(s) espHealthEnabled=s end)
+	toggle(eC,"Names",true,function(s) espNameEnabled=s end)
+	toggle(eC,"Distance",true,function(s) espDistEnabled=s end)
+
+	local ecC=makeCard(eP,"ESP Colours")
+	colorRow(ecC,"Box",espBoxColor,function(c) espBoxColor=c end)
+	colorRow(ecC,"Skeleton",espSkeletonColor,function(c) espSkeletonColor=c end)
+	colorRow(ecC,"Health",espHealthColor,function(c) espHealthColor=c end)
+	colorRow(ecC,"Name",espNameColor,function(c) espNameColor=c end)
+	colorRow(ecC,"Distance",espDistColor,function(c) espDistColor=c end)
+
+	local chC=makeCard(eP,"Chams")
+	toggle(chC,"Enable Chams",false,function(s) chamsEnabled=s end)
+	colorRow(chC,"Visible",chamsVisColor,function(c) chamsVisColor=c end)
+	colorRow(chC,"Invisible",chamsInvisColor,function(c) chamsInvisColor=c end)
+
+	-- ── RAINBOW TAB
+	local rP=panels["Rainbow"]
+	local rC=makeCard(rP,"Rainbow Modes")
+	toggle(rC,"Rainbow ESP",       false,function(s) rainbowESP=s end)
+	toggle(rC,"Rainbow Chams",     false,function(s) rainbowChams=s end)
+	toggle(rC,"Rainbow FOV",       false,function(s) rainbowFOV=s end)
+	toggle(rC,"Rainbow Crosshair", false,function(s) crosshairRainbow=s end)
+
+	-- ── MISC TAB
+	local mP=panels["Misc"]
+	local mC=makeCard(mP,"Info")
+	local ml=Instance.new("TextLabel",mC) ml.Size=UDim2.new(1,0,0,32) ml.BackgroundTransparency=1
+	ml.Text="  KOHAN_SCRIPTS V1.0" ml.TextColor3=GREY ml.TextSize=11 ml.Font=FONT
+
+	Window.BackgroundTransparency=1
+	TweenService:Create(Window,TweenInfo.new(0.2,Enum.EasingStyle.Quad),{BackgroundTransparency=0}):Play()
+end
+
+createGUI()
+
+----------------------------------------------------
+-- Global keybinds
+----------------------------------------------------
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed or bindingAimKey then return end
+	if input.KeyCode==Enum.KeyCode.RightShift then
+		local gui=game.CoreGui:FindFirstChild("RayfieldAimGUI")
+		if gui then
+			local win=gui:FindFirstChild("Window")
+			if win then
+				if win.Visible then
+					TweenService:Create(win,TweenInfo.new(0.2,Enum.EasingStyle.Quad),{BackgroundTransparency=1}):Play()
+					task.delay(0.2,function() win.Visible=false end)
+				else
+					win.Visible=true
+					TweenService:Create(win,TweenInfo.new(0.2,Enum.EasingStyle.Quad),{BackgroundTransparency=0}):Play()
+				end
+			end
+		end
+	end
+end)
